@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模擬面試平台 | Interview Agent</title>
+  <meta name="description" content="上傳履歷，模擬真實面試流程 — 技術問答、Coding Test、System Design" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- ═══ Header ═══ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-mark">IA</span>
+        <span class="logo-text">Interview Agent</span>
+      </div>
+      <div class="header-actions">
+        <button id="btnHistory" class="btn-ghost" title="面試記錄">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span>歷史記錄</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ Main Content ═══ -->
+  <main class="main">
+
+    <!-- ▸ VIEW 1: Upload & Setup ─────────────────────────── -->
+    <section id="viewUpload" class="view active">
+      <div class="upload-hero">
+        <h1 class="hero-title">模擬面試平台</h1>
+        <p class="hero-subtitle">上傳你的履歷，選擇面試模式，即時評分與回饋</p>
+      </div>
+
+      <div class="upload-card card">
+        <div id="dropZone" class="drop-zone">
+          <div class="drop-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <rect x="8" y="14" width="32" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none" />
+              <path d="M18 28l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M24 22v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="drop-text">
+            <span class="drop-primary">拖放履歷 PDF 到這裡</span>
+            <span class="drop-secondary">或點擊選擇檔案（最大 10MB）</span>
+          </div>
+          <input type="file" id="fileInput" accept=".pdf" hidden />
+        </div>
+
+        <!-- File info -->
+        <div id="fileInfo" class="file-info hidden">
+          <div class="file-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+            <span id="fileName"></span>
+            <button id="btnRemoveFile" class="btn-icon-sm" title="移除">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <div id="fileStats" class="file-stats"></div>
+        </div>
+      </div>
+
+      <!-- Interview Config -->
+      <div id="configSection" class="config-section hidden">
+        <div class="card config-card">
+          <h3 class="config-title">面試設定</h3>
+
+          <div class="config-row">
+            <label class="config-label">面試模式</label>
+            <div class="type-selector">
+              <button class="type-btn active" data-type="mixed">
+                <span class="type-icon">📋</span>
+                <span class="type-name">綜合面試</span>
+                <span class="type-desc">技術 + 行為題</span>
+              </button>
+              <button class="type-btn" data-type="technical">
+                <span class="type-icon">🔧</span>
+                <span class="type-name">技術面試</span>
+                <span class="type-desc">專案 & 技術深度</span>
+              </button>
+              <button class="type-btn" data-type="behavioral">
+                <span class="type-icon">💬</span>
+                <span class="type-name">行為面試</span>
+                <span class="type-desc">情境 & 軟技能</span>
+              </button>
+              <button class="type-btn" data-type="coding">
+                <span class="type-icon">⌨️</span>
+                <span class="type-name">Coding Test</span>
+                <span class="type-desc">演算法 & 資料結構</span>
+              </button>
+              <button class="type-btn" data-type="design">
+                <span class="type-icon">🏗️</span>
+                <span class="type-name">System Design</span>
+                <span class="type-desc">架構設計面試</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="config-row">
+            <label class="config-label">題目數量</label>
+            <div class="count-selector">
+              <button class="count-btn" data-count="2">2 題</button>
+              <button class="count-btn" data-count="3">3 題</button>
+              <button class="count-btn active" data-count="5">5 題</button>
+            </div>
+          </div>
+
+          <!-- Resume requirement hint for coding/design -->
+          <div id="resumeHint" class="resume-hint hidden">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <span>此模式使用預設題庫，不需上傳履歷也可直接開始</span>
+          </div>
+
+          <button id="btnStartInterview" class="btn-primary btn-lg">
+            開始面試
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-card card">
+          <div class="loader-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <p class="loading-text" id="loadingText">正在解析履歷...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ VIEW 2: Interview In Progress ──────────────────── -->
+    <section id="viewInterview" class="view">
+      <!-- Progress bar -->
+      <div class="interview-progress">
+        <div class="progress-info">
+          <span id="progressLabel">問題 1 / 5</span>
+          <span id="progressCategory" class="progress-cat"></span>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Question card -->
+      <div class="interview-content">
+        <div class="question-card card">
+          <div class="question-header">
+            <div class="question-meta">
+              <span id="questionBadge" class="q-badge">技術題</span>
+              <span id="questionDifficulty" class="q-difficulty">中等</span>
+            </div>
+            <div class="question-timer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span id="timerDisplay">00:00</span>
+            </div>
+          </div>
+          <div id="questionText" class="question-text"></div>
+          <div id="questionContext" class="question-context hidden">
+            <span class="context-label">相關履歷段落</span>
+            <p id="contextText"></p>
+          </div>
+        </div>
+
+        <!-- Answer area -->
+        <div class="answer-area">
+          <textarea id="answerInput" class="answer-input" placeholder="請在這裡輸入你的回答..." rows="6"></textarea>
+          <div class="answer-actions">
+            <span id="charCount" class="char-count">0 字</span>
+            <button id="btnSubmitAnswer" class="btn-primary">
+              提交回答
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Feedback card -->
+        <div id="feedbackCard" class="feedback-card card hidden">
+          <div class="feedback-header">
+            <h3>即時回饋</h3>
+            <div class="feedback-score">
+              <span class="score-label">得分</span>
+              <span id="feedbackScore" class="score-value">0</span>
+              <span class="score-max">/ 10</span>
+            </div>
+          </div>
+
+          <div class="feedback-dimensions">
+            <div class="dim-item">
+              <span class="dim-label">相關性</span>
+              <div class="dim-bar">
+                <div id="dimRelevance" class="dim-fill"></div>
+              </div>
+              <span id="dimRelevanceVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">深度</span>
+              <div class="dim-bar">
+                <div id="dimDepth" class="dim-fill"></div>
+              </div>
+              <span id="dimDepthVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">表達力</span>
+              <div class="dim-bar">
+                <div id="dimComm" class="dim-fill"></div>
+              </div>
+              <span id="dimCommVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">具體性</span>
+              <div class="dim-bar">
+                <div id="dimSpec" class="dim-fill"></div>
+              </div>
+              <span id="dimSpecVal" class="dim-val">0</span>
+            </div>
+          </div>
+
+          <div id="feedbackText" class="feedback-text"></div>
+          <div id="feedbackStrengths" class="feedback-list"></div>
+          <div id="feedbackImprovements" class="feedback-list"></div>
+
+          <!-- Follow-up question -->
+          <div id="followUpSection" class="follow-up-section hidden">
+            <h4 class="follow-up-title">追問</h4>
+            <p id="followUpText" class="follow-up-text"></p>
+            <textarea id="followUpInput" class="answer-input" placeholder="請回答追問問題..." rows="4"></textarea>
+            <button id="btnSubmitFollowUp" class="btn-secondary">提交追問回答</button>
+          </div>
+
+          <button id="btnNextQuestion" class="btn-primary btn-lg">
+            下一題
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ VIEW 2B: Coding Test ────────────────────────────── -->
+    <section id="viewCoding" class="view">
+      <div class="interview-progress">
+        <div class="progress-info">
+          <span id="codingProgressLabel">問題 1 / 3</span>
+          <span id="codingProgressCat" class="progress-cat">Coding</span>
+        </div>
+        <div class="progress-bar">
+          <div id="codingProgressFill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="coding-content">
+        <div class="coding-problem card">
+          <div class="question-header">
+            <div class="question-meta">
+              <span id="codingTitle" class="q-badge coding-badge"></span>
+              <span id="codingDifficulty" class="q-difficulty"></span>
+            </div>
+            <div class="question-timer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span id="codingTimerDisplay">00:00</span>
+            </div>
+          </div>
+          <div id="codingDescription" class="question-text coding-description"></div>
+          <div id="codingExamples" class="coding-examples"></div>
+          <div id="codingConstraints" class="coding-constraints"></div>
+        </div>
+
+        <div class="code-editor-area">
+          <div class="code-editor-header">
+            <label>語言：</label>
+            <select id="codingLanguage" class="lang-select">
+              <option value="python">Python</option>
+              <option value="javascript">JavaScript</option>
+              <option value="java">Java</option>
+              <option value="cpp">C++</option>
+              <option value="go">Go</option>
+            </select>
+          </div>
+          <textarea id="codeInput" class="code-input" placeholder="// 在這裡寫你的程式碼..." rows="16"></textarea>
+          <div class="answer-actions">
+            <span id="codeLineCount" class="char-count">0 行</span>
+            <button id="btnSubmitCode" class="btn-primary">
+              提交程式碼
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Code feedback -->
+        <div id="codeFeedbackCard" class="feedback-card card hidden">
+          <div class="feedback-header">
+            <h3>程式碼評估</h3>
+            <div class="feedback-score">
+              <span class="score-label">得分</span>
+              <span id="codeFeedbackScore" class="score-value">0</span>
+              <span class="score-max">/ 10</span>
+            </div>
+          </div>
+
+          <div class="feedback-dimensions">
+            <div class="dim-item">
+              <span class="dim-label">正確性</span>
+              <div class="dim-bar">
+                <div id="dimCorrectness" class="dim-fill"></div>
+              </div>
+              <span id="dimCorrectnessVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">時間複雜度</span>
+              <div class="dim-bar">
+                <div id="dimTimeComp" class="dim-fill"></div>
+              </div>
+              <span id="dimTimeCompVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">空間複雜度</span>
+              <div class="dim-bar">
+                <div id="dimSpaceComp" class="dim-fill"></div>
+              </div>
+              <span id="dimSpaceCompVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">程式品質</span>
+              <div class="dim-bar">
+                <div id="dimCodeQuality" class="dim-fill"></div>
+              </div>
+              <span id="dimCodeQualityVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">邊界處理</span>
+              <div class="dim-bar">
+                <div id="dimEdgeCases" class="dim-fill"></div>
+              </div>
+              <span id="dimEdgeCasesVal" class="dim-val">0</span>
+            </div>
+          </div>
+
+          <div id="codeComplexityInfo" class="complexity-info"></div>
+          <div id="codeFeedbackText" class="feedback-text"></div>
+          <div id="codeFeedbackStrengths" class="feedback-list"></div>
+          <div id="codeFeedbackImprovements" class="feedback-list"></div>
+
+          <button id="btnNextCoding" class="btn-primary btn-lg">
+            下一題
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ VIEW 2C: System Design ──────────────────────────── -->
+    <section id="viewDesign" class="view">
+      <div class="interview-progress">
+        <div class="progress-info">
+          <span id="designProgressLabel">問題 1 / 2</span>
+          <span id="designProgressCat" class="progress-cat">System Design</span>
+        </div>
+        <div class="progress-bar">
+          <div id="designProgressFill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="design-content">
+        <div class="design-problem card">
+          <div class="question-header">
+            <div class="question-meta">
+              <span id="designTitle" class="q-badge design-badge"></span>
+              <span id="designDifficulty" class="q-difficulty"></span>
+            </div>
+            <div class="question-timer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span id="designTimerDisplay">00:00</span>
+            </div>
+          </div>
+          <div id="designDescription" class="question-text design-description"></div>
+          <div id="designRequirements" class="design-requirements"></div>
+        </div>
+
+        <div class="design-answer-area">
+          <textarea id="designInput" class="answer-input design-input"
+            placeholder="請描述你的系統設計方案...\n\n可以涵蓋：\n• 系統架構概覽\n• API 設計\n• 資料模型\n• 擴展性考量\n• 取捨與權衡" rows="14"></textarea>
+          <div class="answer-actions">
+            <span id="designCharCount" class="char-count">0 字</span>
+            <button id="btnSubmitDesign" class="btn-primary">
+              提交設計方案
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Design feedback -->
+        <div id="designFeedbackCard" class="feedback-card card hidden">
+          <div class="feedback-header">
+            <h3>設計評估</h3>
+            <div class="feedback-score">
+              <span class="score-label">得分</span>
+              <span id="designFeedbackScore" class="score-value">0</span>
+              <span class="score-max">/ 10</span>
+            </div>
+          </div>
+
+          <div class="feedback-dimensions">
+            <div class="dim-item">
+              <span class="dim-label">API 設計</span>
+              <div class="dim-bar">
+                <div id="dimApiDesign" class="dim-fill"></div>
+              </div>
+              <span id="dimApiDesignVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">資料模型</span>
+              <div class="dim-bar">
+                <div id="dimDataModel" class="dim-fill"></div>
+              </div>
+              <span id="dimDataModelVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">擴展性</span>
+              <div class="dim-bar">
+                <div id="dimScalability" class="dim-fill"></div>
+              </div>
+              <span id="dimScalabilityVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">權衡取捨</span>
+              <div class="dim-bar">
+                <div id="dimTradeoffs" class="dim-fill"></div>
+              </div>
+              <span id="dimTradeoffsVal" class="dim-val">0</span>
+            </div>
+            <div class="dim-item">
+              <span class="dim-label">表達溝通</span>
+              <div class="dim-bar">
+                <div id="dimDesignComm" class="dim-fill"></div>
+              </div>
+              <span id="dimDesignCommVal" class="dim-val">0</span>
+            </div>
+          </div>
+
+          <div id="designFeedbackText" class="feedback-text"></div>
+          <div id="designFeedbackStrengths" class="feedback-list"></div>
+          <div id="designFeedbackImprovements" class="feedback-list"></div>
+
+          <div id="designFollowUpSection" class="follow-up-section hidden">
+            <h4 class="follow-up-title">追問</h4>
+            <p id="designFollowUpText" class="follow-up-text"></p>
+          </div>
+
+          <button id="btnNextDesign" class="btn-primary btn-lg">
+            下一題
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ VIEW 3: Results ────────────────────────────────── -->
+    <section id="viewResult" class="view">
+      <div class="result-header">
+        <h2 class="result-title">面試報告</h2>
+        <div id="resultVerdict" class="result-verdict"></div>
+      </div>
+
+      <div class="result-overview card">
+        <div class="result-score-circle">
+          <canvas id="scoreCanvas" width="200" height="200"></canvas>
+          <div class="score-center">
+            <span id="resultScore" class="big-score">0</span>
+            <span class="score-label-sm">/ 10</span>
+          </div>
+        </div>
+        <div class="result-summary">
+          <p id="resultSummary"></p>
+        </div>
+      </div>
+
+      <div class="result-radar card">
+        <h3>能力維度分析</h3>
+        <canvas id="radarCanvas" width="400" height="400"></canvas>
+      </div>
+
+      <div class="result-details">
+        <div class="card result-strengths">
+          <h3>核心優勢</h3>
+          <ul id="resultStrengths"></ul>
+        </div>
+        <div class="card result-improve">
+          <h3>待加強領域</h3>
+          <ul id="resultImprovements"></ul>
+        </div>
+      </div>
+
+      <div class="result-breakdown card">
+        <h3>逐題回顧</h3>
+        <div id="resultBreakdown"></div>
+      </div>
+
+      <div class="result-notes card">
+        <h3>面試官備註</h3>
+        <p id="resultNotes"></p>
+        <div class="result-next">
+          <h4>建議下一步</h4>
+          <p id="resultNextSteps"></p>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button id="btnNewInterview" class="btn-primary btn-lg">開始新的面試</button>
+      </div>
+    </section>
+
+    <!-- ▸ VIEW 4: History ────────────────────────────────── -->
+    <section id="viewHistory" class="view">
+      <div class="history-header">
+        <button id="btnBackFromHistory" class="btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          返回
+        </button>
+        <h2>面試歷史記錄</h2>
+      </div>
+      <div id="historyList" class="history-list"></div>
+      <div id="historyEmpty" class="history-empty hidden">
+        <p>還沒有面試記錄</p>
+        <p class="subtle">完成一次模擬面試後，記錄會自動保存在這裡</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
