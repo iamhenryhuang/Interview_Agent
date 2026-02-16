@@ -8,8 +8,8 @@
   --bg-primary: #0a0a0f;
   --bg-secondary: #12121a;
   --bg-tertiary: #1a1a28;
-  --bg-glass: rgba(18, 18, 30, 0.65);
-  --bg-glass-hover: rgba(24, 24, 42, 0.75);
+  --bg-glass: rgba(20, 20, 35, 0.55);
+  --bg-glass-hover: rgba(30, 30, 50, 0.65);
 
   --text-primary: #e8e8f0;
   --text-secondary: #a0a0b8;
@@ -1493,9 +1493,19 @@ body::after {
 }
 
 .history-empty {
-  text-align: center;
-  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 20px;
   color: var(--text-tertiary);
+  text-align: center;
+}
+
+.history-empty svg {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+  margin-bottom: 8px;
 }
 
 .history-empty .subtle {
@@ -1535,4 +1545,312 @@ body::after {
   .dim-item {
     grid-template-columns: 72px 1fr 28px;
   }
+}
+
+/* ── Coding Source Selector ──────────────────────────────── */
+.source-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.source-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all 0.25s ease;
+}
+
+.source-btn:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-tertiary);
+}
+
+.source-btn.active {
+  border-color: var(--accent-primary);
+  background: rgba(100, 108, 255, 0.08);
+  color: var(--text-primary);
+  box-shadow: 0 0 14px rgba(100, 108, 255, 0.12);
+}
+
+.source-icon {
+  font-size: 1.5rem;
+}
+
+.source-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.source-desc {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+}
+
+.source-btn.active .source-desc {
+  color: var(--accent-primary);
+}
+
+/* LeetCode Difficulty Buttons */
+.lc-diff-btn {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lc-diff-btn:hover {
+  border-color: var(--border-hover);
+}
+
+.lc-diff-btn.active {
+  border-color: var(--accent-primary);
+  background: rgba(100, 108, 255, 0.08);
+  color: var(--accent-primary);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(100, 108, 255, 0.1);
+}
+
+/* Tag Selector */
+.tag-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-btn {
+  padding: 5px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-btn:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-tertiary);
+}
+
+.tag-btn.active {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 229, 255, 0.08);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.15);
+}
+
+/* LeetCode Link */
+.leetcode-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 6px 14px;
+  background: rgba(255, 161, 22, 0.08);
+  border: 1px solid rgba(255, 161, 22, 0.25);
+  border-radius: var(--radius-sm);
+  color: #ffa116;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.leetcode-link:hover {
+  background: rgba(255, 161, 22, 0.14);
+  box-shadow: 0 0 12px rgba(255, 161, 22, 0.12);
+}
+
+/* Difficulty Color Badges */
+.difficulty-easy {
+  color: var(--neon-green) !important;
+}
+
+.difficulty-medium {
+  color: var(--neon-yellow) !important;
+}
+
+.difficulty-hard {
+  color: var(--neon-pink) !important;
+}
+
+/* ── Split View Layout (LeetCode Style) ─────────────────── */
+.coding-split-view {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 16px;
+  height: calc(100vh - 180px);
+  /* Adjust based on header + progress bar */
+  min-height: 500px;
+}
+
+/* Common scrollable card style */
+.coding-problem.scrollable-pane,
+.code-editor-area {
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Left Pane: Problem Description */
+.coding-problem.scrollable-pane {
+  padding-right: 12px;
+  /* Avoid scrollbar overlapping text */
+}
+
+/* Fix for overlapping text and formatting in LeetCode descriptions */
+.coding-description {
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.coding-description p {
+  margin-bottom: 1em;
+}
+
+.coding-description pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.coding-description code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--accent-primary);
+}
+
+.coding-description img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.coding-description ul,
+.coding-description ol {
+  padding-left: 20px;
+  margin-bottom: 1em;
+}
+
+.coding-description li {
+  margin-bottom: 6px;
+}
+
+/* Right Pane: Code Editor */
+.code-editor-area {
+  background: #1e1e1e;
+  /* Darker editor bg */
+  border-color: #333;
+  padding: 0;
+  /* Remove default padding to let toolbar span full width */
+  overflow: hidden;
+  /* Header/Footer fixed, specific areas scroll */
+}
+
+.code-editor-header {
+  padding: 12px 16px;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.code-input {
+  flex: 1;
+  width: 100%;
+  background: #1e1e1e;
+  /* VS Code like dark */
+  color: #d4d4d4;
+  border: none;
+  padding: 16px;
+  resize: none;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+}
+
+.code-input:focus {
+  box-shadow: none;
+}
+
+.editor-footer {
+  padding: 12px 16px;
+  background: #252526;
+  border-top: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+  .coding-split-view {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .coding-split-view>.card {
+    height: 500px;
+    /* Fixed height for stacked cards */
+  }
+}
+
+/* Scrollbar styling for split view */
+.coding-problem::-webkit-scrollbar,
+.code-input::-webkit-scrollbar {
+  width: 8px;
+}
+
+.coding-problem::-webkit-scrollbar-track,
+.code-input::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.coding-problem::-webkit-scrollbar-thumb,
+.code-input::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.coding-problem::-webkit-scrollbar-thumb:hover,
+.code-input::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }

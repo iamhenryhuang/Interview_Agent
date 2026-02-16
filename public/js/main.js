@@ -15,6 +15,9 @@ export const state = {
     qaHistory: [],
     currentView: 'viewUpload',
     mode: 'interview', // interview | coding | design
+    codingSource: 'local', // local | leetcode
+    lcDifficulty: 'mixed',
+    lcTags: [],
 };
 
 // ── DOM Helper ───────────────────────────────────────────
