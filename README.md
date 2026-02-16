@@ -1,25 +1,24 @@
 # Interview Agent
 
-Mock interviews with AI. Upload a resume, pick a mode, get scored and feedback as you go.
+Practice mock interviews with AI. Upload your resume (PDF), pick a mode, answer questions, and get scored with feedback as you go.
+
+## What it does
+
+- **Resume-based modes** (General / Technical / Behavioral): AI generates questions from your PDF. Uses Gemini to tailor questions and grade your answers.
+- **Coding Test**: Built-in 30 algo questions, local IDE, multiple languages. No resume needed.
+- **System Design**: 15 built-in questions on API design, data models, scalability.
+
+You get per-question scores, feedback, and a final report (radar chart + recap).
 
 ## Modes
 
-| Mode | What it is | Resume? | Questions from |
-|------|------------|:-------:|----------------|
-| General | Tech + behavioral | ✅ | AI (from resume) |
-| Technical | Projects, depth | ✅ | AI (from resume) |
-| Behavioral | Situations, soft skills | ✅ | AI (from resume) |
-| Coding Test | Algo & data structures | ❌ | Local (30 questions) |
-| System Design | Architecture | ❌ | Local (15 questions) |
-
-Resume-based modes use Gemini to generate questions from your PDF. Coding and System Design use built-in question banks, no API calls for the questions themselves.
-
-- PDF resume: drag & drop, text is extracted for the AI
-- Per-question scoring and feedback
-- Coding: built-in IDE, multiple languages, complexity notes
-- Design: evaluated on API shape, data model, scalability, etc.
-- Report: radar chart, per-question recap, suggestions
-- History in localStorage
+| Mode | Resume? | Question source |
+|------|:-------:|-----------------|
+| General | ✅ | AI (from resume) |
+| Technical | ✅ | AI (from resume) |
+| Behavioral | ✅ | AI (from resume) |
+| Coding Test | ❌ | Local (30 Qs) |
+| System Design | ❌ | Local (15 Qs) |
 
 ## Stack
 
@@ -27,40 +26,39 @@ Resume-based modes use Gemini to generate questions from your PDF. Coding and Sy
 - Backend: Node, Express
 - AI: Google Gemini 2.5 Flash
 - PDF: pdf-parse
-- Fonts: DM Serif Display, Inter, JetBrains Mono
 
-## Layout
+## Project structure
 
 ```
 interview_agent/
 ├── server.js
 ├── package.json
-├── .env                    # GEMINI_API_KEY
+├── .env                 # GEMINI_API_KEY
 ├── src/
-│   ├── gemini.js           # client + callGemini()
-│   ├── prompts/            # interview, coding, design, summary
-│   ├── routes/             # upload, interview, coding, design
-│   └── data/               # coding-questions.js (30), design-questions.js (15)
+│   ├── gemini.js
+│   ├── prompts/
+│   ├── routes/
+│   └── data/            # coding-questions.js, design-questions.js
 ├── public/
 │   ├── index.html
 │   ├── css/style.css
-│   └── js/                 # main, api, timer, canvas, upload, interview, coding, design, result, history
-└── uploads/                # temp PDFs
+│   └── js/
+└── uploads/             # temp PDFs
 ```
 
 ## API
 
-| Method | Path | Calls Gemini? |
-|--------|------|:-------------:|
-| POST | `/api/upload-resume` | no |
-| POST | `/api/start-interview` | yes |
-| POST | `/api/evaluate-answer` | yes |
-| POST | `/api/interview-summary` | yes |
-| POST | `/api/start-coding-test` | no |
-| POST | `/api/evaluate-code` | yes |
-| POST | `/api/start-system-design` | no |
-| POST | `/api/evaluate-design` | yes |
-| POST | `/api/specialized-summary` | yes |
+| Method | Path |
+|--------|------|
+| POST | `/api/upload-resume` |
+| POST | `/api/start-interview` |
+| POST | `/api/evaluate-answer` |
+| POST | `/api/interview-summary` |
+| POST | `/api/start-coding-test` |
+| POST | `/api/evaluate-code` |
+| POST | `/api/start-system-design` |
+| POST | `/api/evaluate-design` |
+| POST | `/api/specialized-summary` |
 
 ## Run
 
