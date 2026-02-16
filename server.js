@@ -16,6 +16,7 @@ const uploadRoutes = require('./src/routes/upload');
 const interviewRoutes = require('./src/routes/interview');
 const codingRoutes = require('./src/routes/coding');
 const designRoutes = require('./src/routes/design');
+const leetcodeRoutes = require('./src/routes/leetcode');
 
 // ── App setup ───────────────────────────────────────────
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api', uploadRoutes);
 app.use('/api', interviewRoutes);
 app.use('/api', codingRoutes);
 app.use('/api', designRoutes);
+app.use('/api', leetcodeRoutes);
 
 // ── Error handler ───────────────────────────────────────
 app.use((err, _req, res, _next) => {

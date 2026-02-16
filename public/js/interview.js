@@ -39,7 +39,7 @@ function showQuestion(index) {
 
     // Progress
     $('progressLabel').textContent = `第 ${index + 1} / ${state.questions.length} 題`;
-    $('progressCat').textContent = q.category || '';
+    $('progressCategory').textContent = q.category || '';
     $('progressFill').style.width = `${((index + 1) / state.questions.length) * 100}%`;
 
     // Question content
@@ -63,7 +63,7 @@ function showQuestion(index) {
     $('btnNextQuestion').classList.add('hidden');
 
     // Start timer
-    startTimer('questionTimer');
+    startTimer('timerDisplay');
 }
 
 // ── Character Count ──────────────────────────────────────

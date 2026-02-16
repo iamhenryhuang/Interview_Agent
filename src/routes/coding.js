@@ -6,8 +6,26 @@ const express = require('express');
 const { callGemini } = require('../gemini');
 const { buildCodeEvaluationPrompt } = require('../prompts/coding');
 const { selectCodingQuestions } = require('../data/coding-questions');
+const { fetchRandomProblems } = require('../leetcode');
 
 const router = express.Router();
+
+/** POST /api/start-coding-test-leetcode — 從 LeetCode 即時取得真題 */
+router.post('/start-coding-test-leetcode', async (req, res) => {
+    try {
+        const { count = 3, difficulty = 'mixed', tags = [] } = req.body;
+        const questions = await fetchRandomProblems(count, difficulty, tags);
+
+        if (questions.length === 0) {
+            return res.status(404).json({ error: '找不到符合條件的 LeetCode 題目' });
+        }
+
+        res.json({ success: true, questions });
+    } catch (err) {
+        console.error('[coding/start-leetcode]', err.message);
+        res.status(500).json({ error: err.message || '從 LeetCode 取題失敗' });
+    }
+});
 
 /** POST /api/start-coding-test — 從本地題庫取得題目（不消耗 API） */
 router.post('/start-coding-test', (req, res) => {

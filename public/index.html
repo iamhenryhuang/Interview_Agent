@@ -18,7 +18,7 @@
   <!-- ═══ Header ═══ -->
   <header class="header">
     <div class="header-inner">
-      <div class="logo">
+      <div id="btnHome" class="logo" style="cursor: pointer;">
         <span class="logo-mark">IA</span>
         <span class="logo-text">Interview Agent</span>
       </div>
@@ -133,6 +133,37 @@
               <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
             <span>此模式使用預設題庫，不需上傳履歷也可直接開始</span>
+          </div>
+
+          <!-- Coding Source selector (only visible when coding mode) -->
+          <div id="codingSourceSection" class="config-row hidden">
+            <label class="config-label">題目來源</label>
+            <div class="source-selector">
+              <button class="source-btn active" data-source="local">
+                <span class="source-icon">📦</span>
+                <span class="source-name">本地題庫</span>
+                <span class="source-desc">30 道精選面試高頻題</span>
+              </button>
+              <button class="source-btn" data-source="leetcode">
+                <span class="source-icon">🌐</span>
+                <span class="source-name">LeetCode 即時</span>
+                <span class="source-desc">從 LeetCode 即時爬取真題</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- LeetCode options (only visible when LeetCode source) -->
+          <div id="leetcodeOptions" class="config-row hidden">
+            <label class="config-label">LeetCode 難度</label>
+            <div class="count-selector">
+              <button class="lc-diff-btn active" data-lcdiff="mixed">混合</button>
+              <button class="lc-diff-btn" data-lcdiff="EASY">Easy</button>
+              <button class="lc-diff-btn" data-lcdiff="MEDIUM">Medium</button>
+              <button class="lc-diff-btn" data-lcdiff="HARD">Hard</button>
+            </div>
+
+            <label class="config-label" style="margin-top: 12px">分類標籤（可多選）</label>
+            <div id="lcTagSelector" class="tag-selector"></div>
           </div>
 
           <button id="btnStartInterview" class="btn-primary btn-lg">
@@ -284,45 +315,49 @@
       </div>
 
       <div class="coding-content">
-        <div class="coding-problem card">
-          <div class="question-header">
-            <div class="question-meta">
-              <span id="codingTitle" class="q-badge coding-badge"></span>
-              <span id="codingDifficulty" class="q-difficulty"></span>
+        <div class="coding-split-view">
+          <div class="coding-problem card scrollable-pane">
+            <div class="question-header">
+              <div class="question-meta">
+                <span id="codingTitle" class="q-badge coding-badge"></span>
+                <span id="codingDifficulty" class="q-difficulty"></span>
+              </div>
+              <div class="question-timer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <span id="codingTimerDisplay">00:00</span>
+              </div>
             </div>
-            <div class="question-timer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              <span id="codingTimerDisplay">00:00</span>
-            </div>
+            <div id="codingDescription" class="question-text coding-description"></div>
+            <div id="codingExamples" class="coding-examples"></div>
+            <div id="codingConstraints" class="coding-constraints"></div>
           </div>
-          <div id="codingDescription" class="question-text coding-description"></div>
-          <div id="codingExamples" class="coding-examples"></div>
-          <div id="codingConstraints" class="coding-constraints"></div>
-        </div>
 
-        <div class="code-editor-area">
-          <div class="code-editor-header">
-            <label>語言：</label>
-            <select id="codingLanguage" class="lang-select">
-              <option value="python">Python</option>
-              <option value="javascript">JavaScript</option>
-              <option value="java">Java</option>
-              <option value="cpp">C++</option>
-              <option value="go">Go</option>
-            </select>
-          </div>
-          <textarea id="codeInput" class="code-input" placeholder="// 在這裡寫你的程式碼..." rows="16"></textarea>
-          <div class="answer-actions">
-            <span id="codeLineCount" class="char-count">0 行</span>
-            <button id="btnSubmitCode" class="btn-primary">
-              提交程式碼
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
+          <div class="code-editor-area card">
+            <div class="code-editor-header">
+              <label>語言：</label>
+              <select id="codingLanguage" class="lang-select">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="java">Java</option>
+                <option value="cpp">C++</option>
+                <option value="c">C</option>
+              </select>
+            </div>
+            <textarea id="codeInput" class="code-input" placeholder="// 在這裡寫你的程式碼..." rows="16"></textarea>
+            <div class="editor-footer">
+              <span id="codeLineCount" class="char-count">0 行</span>
+              <div class="editor-actions">
+                <button id="btnSubmitCode" class="btn-primary">
+                  提交程式碼
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -574,6 +609,10 @@
       </div>
       <div id="historyList" class="history-list"></div>
       <div id="historyEmpty" class="history-empty hidden">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+        </svg>
         <p>還沒有面試記錄</p>
         <p class="subtle">完成一次模擬面試後，記錄會自動保存在這裡</p>
       </div>

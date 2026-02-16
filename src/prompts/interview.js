@@ -7,28 +7,30 @@
  * 根據履歷生成面試題目
  */
 function buildQuestionPrompt(resumeText, interviewType, questionCount) {
-    const typeMap = {
-        technical: '技術面試（聚焦於專業技能、專案經驗、技術深度）',
-        behavioral: '行為面試（聚焦於團隊合作、領導力、問題解決、情境反應）',
-        mixed: '綜合面試（技術題與行為題各半）',
-    };
+  const typeMap = {
+    technical: '技術面試（聚焦於專業技能、專案經驗、技術深度）',
+    behavioral: '行為面試（聚焦於團隊合作、領導力、問題解決、情境反應）',
+    mixed: '綜合面試（技術題與行為題各半）',
+  };
 
-    const typeDesc = typeMap[interviewType] || typeMap.mixed;
+  const typeDesc = typeMap[interviewType] || typeMap.mixed;
 
-    return `你是一位經驗豐富的面試官，正在進行一場 ${typeDesc}。
+  return `你是一位經驗豐富的面試官，正在進行一場 ${typeDesc}。
 
 以下是候選人的履歷：
 ---
 ${resumeText}
 ---
 
-請根據這份履歷，生成 ${questionCount} 道面試題目。要求：
+請根據這份履歷，生成 ${questionCount} 道面試題目。
 
-1. 題目必須針對履歷中提到的具體經歷、技術或專案
-2. 難度由淺入深排列
-3. 包含至少 1 題需要候選人深入解釋技術細節的題目
-4. 包含至少 1 題情境式問題（例如「如果遇到……你會怎麼處理？」）
-5. 每題附帶評分標準（滿分 10 分）
+**重要規則（CRITICAL）：**
+1. **題目必須針對履歷中提到的具體經歷、技術堆疊、專案名稱或公司背景。**
+2. **嚴禁生成與履歷無關的通用罐頭題**（除非履歷內容極少）。
+3. 如果履歷中提到某個專案，請追問該專案的具體實作細節或挑戰。
+4. 難度由淺入深排列。
+5. 包含至少 1 題情境式問題（例如「如果遇到……你會怎麼處理？」）。
+6. 每題附帶評分標準（滿分 10 分）。
 
 請以下列 JSON 格式回應，不要加任何多餘文字：
 {
@@ -36,7 +38,7 @@ ${resumeText}
     {
       "id": 1,
       "category": "technical" | "behavioral" | "situational",
-      "question": "題目內容",
+      "question": "題目內容（包含引用履歷中的具體內容）",
       "keyPoints": ["評分重點1", "評分重點2", "評分重點3"],
       "difficulty": "easy" | "medium" | "hard",
       "relatedResumeSection": "與此題相關的履歷段落摘要"
@@ -49,7 +51,7 @@ ${resumeText}
  * 評估單題回答
  */
 function buildEvaluationPrompt(question, answer, resumeContext, keyPoints) {
-    return `你是一位經驗豐富的面試官，正在評估候選人的回答。
+  return `你是一位經驗豐富的面試官，正在評估候選人的回答。
 
 【面試題目】
 ${question}
